@@ -2,9 +2,9 @@ package org.example;
 
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import org.knowm.xchart.style.markers.None;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,7 +38,7 @@ public class MonteCarloVisualizer {
         XYChart chart = new XYChartBuilder()
                 .width(600)
                 .height(600)
-                .title(String.format("n = %,d | inside = %,d | π ≈ %.4f", totalPoints, inside, piEstimate))
+                .title(String.format("n = %,d | inside = %,d | \u03c0 \u2248 %.4f", totalPoints, inside, piEstimate))
                 .xAxisTitle("")
                 .yAxisTitle("")
                 .build();
@@ -68,6 +68,13 @@ public class MonteCarloVisualizer {
         circle.setLineColor(Color.RED);
         circle.setLineStyle(new BasicStroke(2.5f));
 
-        new SwingWrapper<>(chart).displayChart();
+        // Docker-friendly: Save the visualization to a PNG instead of spawning a GUI window
+        try {
+            System.out.println("💾 Saving simulation visualization to 'monte_carlo_visualization.png'...");
+            BitmapEncoder.saveBitmap(chart, "./monte_carlo_visualization", BitmapEncoder.BitmapFormat.PNG);
+            System.out.println("✅ Visualization saved successfully!");
+        } catch (IOException e) {
+            System.err.println("❌ Failed to save the visualization image: " + e.getMessage());
+        }
     }
 }

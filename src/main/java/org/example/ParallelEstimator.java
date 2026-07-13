@@ -1,6 +1,5 @@
 package org.example;
 
-import java.util.Random;
 import java.util.concurrent.*;
 
 public class ParallelEstimator implements PiEstimator {
@@ -21,7 +20,8 @@ public class ParallelEstimator implements PiEstimator {
 
         @Override
         public Long call() {
-            Random rand = new Random();
+            // Optimized: Use ThreadLocalRandom to prevent thread contention on the seed generator
+            ThreadLocalRandom rand = ThreadLocalRandom.current();
             long inside = 0;
             for (long i = 0; i < samples; i++) {
                 double x = rand.nextDouble();
@@ -57,7 +57,7 @@ public class ParallelEstimator implements PiEstimator {
         double pi = 4.0 * totalInside / totalPoints;
         double time = (end - start) / 1e9;
 
-        System.out.printf("Parallel: Pi ≈ %.6f | Time = %.3f s%n", pi, time);
+        System.out.printf("Parallel: Pi \u2248 %.6f | Time = %.3f s%n", pi, time);
         return time;
     }
 }
